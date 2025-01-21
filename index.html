@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحة الفيدباك</title>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #0078C8, #243747);
+        }
+
+        .feedback-container {
+            text-align: center;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #243747;
+        }
+
+        p {
+            font-size: 1.5rem;
+            color: #636e72;
+            margin-bottom: 30px;
+        }
+
+        .emoji-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .emoji {
+            font-size: 4rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .emoji:hover {
+            transform: scale(1.3);
+        }
+
+        .message {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 15px;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #dfe6e9;
+            border-radius: 10px;
+            resize: none;
+        }
+
+        button {
+            background: #0078C8;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            margin-top: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #243747;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="feedback-container">
+        <h1>قيم تجربتك معنا</h1>
+        <p>نحن نسعى دائمًا لتحسين خدماتنا بناءً على رأيك</p>
+        
+        <div class="emoji-container">
+            <span class="emoji" onclick="showThankYou('😊')">😊</span>
+            <span class="emoji" onclick="showThankYou('😐')">😐</span>
+            <span class="emoji" onclick="askReason('😕')">😕</span>
+            <span class="emoji" onclick="askReason('😡')">😡</span>
+            <span class="emoji" onclick="askReason('🤬')">🤬</span>
+        </div>
+
+        <div id="thankYouMessage" class="message">
+            <h2>شكرًا لك!</h2>
+            <p>نقدر تقييمك ونسعى دائمًا للتحسين.</p>
+        </div>
+
+        <div id="reasonForm" class="message">
+            <h2>نأسف لسماع ذلك</h2>
+            <p>يرجى توضيح سبب اختيارك لهذا التقييم:</p>
+            <textarea id="reasonInput" placeholder="اكتب سبب تقييمك هنا..."></textarea>
+            <button onclick="submitFeedback()">إرسال</button>
+        </div>
+    </div>
+
+    <script>
+        function showThankYou(feedback) {
+            document.getElementById('thankYouMessage').style.display = 'block';
+            document.getElementById('reasonForm').style.display = 'none';
+            if (feedback === '😊' || feedback === '😐') {
+                sendToGoogleSheet(feedback, '');
+            }
+        }
+
+        function askReason(feedback) {
+            document.getElementById('reasonForm').style.display = 'block';
+            document.getElementById('thankYouMessage').style.display = 'none';
+            document.getElementById('reasonForm').dataset.feedback = feedback;
+        }
+
+        function submitFeedback() {
+            const reason = document.getElementById('reasonInput').value;
+            const feedback = document.getElementById('reasonForm').dataset.feedback;
+            sendToGoogleSheet(feedback, reason);
+            document.getElementById('thankYouMessage').style.display = 'block';
+            document.getElementById('reasonForm').style.display = 'none';
+        }
+
+        function sendToGoogleSheet(feedback, reason) {
+            const params = new URLSearchParams();
+            params.append('feedback', feedback);
+            params.append('reason', reason);
+
+            fetch('https://script.google.com/macros/s/AKfycbxG81VQxMkl8ENLUJF10SnGouY9NKBhAmh9shctPMpHIRMsSmZLz4k1fDWYGEn5gqOdHg/exec', {
+                method: 'POST',
+                body: params
+            })
+            .then(response => console.log('Feedback submitted:', response))
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
