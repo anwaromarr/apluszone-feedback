@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>صفحة الفيدباك</title>
     <style>
-        body {
+        html, body {
             font-family: 'Cairo', sans-serif;
             margin: 0;
             padding: 0;
@@ -30,38 +30,39 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-evenly;
+            padding-bottom: 30px;
         }
 
         .logo {
             width: 150px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         h1 {
             font-size: 2.2rem;
             color: #243747;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         p {
             font-size: 1.2rem;
             color: #192B39;
             font-weight: bold;
-            margin-top: 5px;
-            margin-bottom: 20px;
+            margin-top: 10px;
+            margin-bottom: 30px;
         }
 
         .emoji-container {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin-top: 10px;
+            gap: 30px;
+            margin-top: 20px;
         }
 
         .emoji {
-            width: 7rem;
-            height: 7rem;
+            width: 6rem;
+            height: 6rem;
             cursor: pointer;
             transition: transform 0.3s ease;
         }
@@ -73,6 +74,7 @@
         .message {
             display: none;
             animation: fadeIn 0.5s ease;
+            position: relative;
         }
 
         textarea {
@@ -140,6 +142,12 @@
     </div>
 
     <script>
+        document.getElementById("reasonInput").addEventListener("focus", function() {
+            setTimeout(() => {
+                document.getElementById("reasonForm").scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 300);
+        });
+
         function showThankYou(feedback) {
             sendToGoogleSheet(feedback, '');
             document.getElementById('thankYouMessage').style.display = 'block';
@@ -152,6 +160,7 @@
             document.getElementById('reasonForm').style.display = 'block';
             document.getElementById('emojiContainer').style.display = 'none';
             document.getElementById('reasonForm').dataset.feedback = feedback;
+            document.getElementById('reasonInput').value = '';
         }
 
         function submitFeedback() {
@@ -166,6 +175,7 @@
         function resetFeedback() {
             document.getElementById('thankYouMessage').style.display = 'none';
             document.getElementById('emojiContainer').style.display = 'flex';
+            document.getElementById('reasonInput').value = '';
         }
 
         function sendToGoogleSheet(feedback, reason) {
